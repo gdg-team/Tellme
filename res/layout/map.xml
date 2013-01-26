@@ -45,7 +45,8 @@
             android:id="@+id/showSearchButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/action_search" />
+            android:background="@drawable/action_search"
+            android:onClick="showHideSearchControls" />
 
     </LinearLayout>
 
@@ -53,7 +54,8 @@
         android:id="@+id/searchLayout"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical" >
+        android:orientation="vertical"
+        android:visibility="gone" >
 
         <LinearLayout
             android:id="@+id/locationSearchLayout"
