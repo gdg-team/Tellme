@@ -3,7 +3,9 @@ package com.gdgteam.tellme.android.activity;
 import java.util.HashMap;
 import java.util.Map;
 
+import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.location.Location;
 import android.util.Log;
 
@@ -23,6 +25,7 @@ import com.google.android.maps.Overlay;
 public class LocationsOverlay extends Overlay {
     private static final String TAG = LocationsOverlay.class.getSimpleName();
     
+    private final Context context;
     private final int maxLocations;
     private AnnotatedLocationColors myColors;
     
@@ -32,12 +35,15 @@ public class LocationsOverlay extends Overlay {
     private Map<String, Integer> locationIdColors = new HashMap<String, Integer>();
     private Map<String, Location> locations = new HashMap<String, Location>();
     private int colorInd = 0;
+    
+    private static final String ME = "Me";
 
     private static final int RADIUS = 5;
 
     Location myLocation;
 
-    public LocationsOverlay(int maxLocations) {
+    public LocationsOverlay(Context context, int maxLocations) {
+        this.context = context;
         this.maxLocations = maxLocations;
         
         generateMyColors();
@@ -49,7 +55,7 @@ public class LocationsOverlay extends Overlay {
         int rColor = maxColor;
         int gColor = maxColor;
         int bColor = maxColor;
-        int step = 50;
+        int step = 100;
         
         predefinedColors = new AnnotatedLocationColors[maxLocations];
         
@@ -107,12 +113,12 @@ public class LocationsOverlay extends Overlay {
     public void draw(Canvas canvas, MapView mapView, boolean shadow) {
         if (shadow == false) {
             if(myLocation != null) {
-                AnnotatedLocationImage locationImage = locationImageFactory.createAnnotatedLocationImage(mapView, myLocation, RADIUS);
-                painter.drawAnnotatedLocation(canvas, locationImage, "Me", myColors);
+                AnnotatedLocationImage locationImage = locationImageFactory.createAnnotatedLocationImage(mapView, myLocation, RADIUS, getAnnotationRectLength(ME));
+                painter.drawAnnotatedLocation(canvas, locationImage, ME, myColors);
             }
 
             for(String id: locationIdColors.keySet()) {
-                AnnotatedLocationImage locationImage = locationImageFactory.createAnnotatedLocationImage(mapView, locations.get(id), RADIUS);
+                AnnotatedLocationImage locationImage = locationImageFactory.createAnnotatedLocationImage(mapView, locations.get(id), RADIUS, getAnnotationRectLength(id));
                 painter.drawAnnotatedLocation(canvas, locationImage, id, predefinedColors[locationIdColors.get(id)]);
             }
         }
@@ -123,5 +129,14 @@ public class LocationsOverlay extends Overlay {
     @Override
     public boolean onTap(GeoPoint point, MapView mapView) {
         return false;
+    }
+    
+    private float getAnnotationRectLength(String annotation) {
+        final float densityMultiplier = context.getResources().getDisplayMetrics().density;
+        final float scaledPx = 20 * densityMultiplier;
+        Paint paint = new Paint();
+        paint.setTextSize(scaledPx);
+        final float size = paint.measureText(annotation);        
+        return size;
     }
 }
