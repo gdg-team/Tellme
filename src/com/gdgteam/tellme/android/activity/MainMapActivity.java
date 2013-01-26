@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.gdgteam.tellme.R;
 import com.gdgteam.tellme.android.ApplManager;
@@ -59,6 +60,13 @@ public class MainMapActivity extends MapActivity {
 //        Account googleAccount = ApplManager.getInstance().getAccountProvider().getGoogleAccount(this);
 
         updateWithNewLocation(l);
+    }
+
+    public void showHideSearchControls(View view) {
+    	View searchLayout = findViewById(R.id.searchLayout);
+    	int visibility = searchLayout.getVisibility();
+    	if(visibility == View.VISIBLE) searchLayout.setVisibility(View.GONE);
+    	else searchLayout.setVisibility(View.VISIBLE);
     }
 
 //    @Override
