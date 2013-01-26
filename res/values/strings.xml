@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Tell Me</string>
-    <string name="me">Me</string>
+    <string name="app_name">Localitwee</string>
     <string name="writeYourTweet">Write your tweet here...</string>
     <string name="tweet">Tweet</string>
     <string name="cancel">Cancel</string>
