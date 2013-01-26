@@ -154,7 +154,7 @@ public class MainMapActivity extends MapActivity {
         }
         l1.setLatitude(51.521255);
         l1.setLongitude(-0.089285);
-        locationsOverlay.addLocation("@sorhed", l1);
+        locationsOverlay.addLocation("@sorhed", l1, "Just got here");
         Location l2 = ApplManager.getInstance().getLocationProvider().getLocation(this, dummyLocationListener);
         if(l2 == null) {
             Log.w("gdg-team", "Location is null - check API key");
@@ -162,6 +162,6 @@ public class MainMapActivity extends MapActivity {
         }
         l2.setLatitude(51.519973);
         l2.setLongitude(-0.083814);
-        locationsOverlay.addLocation("@kuklev", l2);
+        locationsOverlay.addLocation("@kuklev", l2, "Nice weather");
     }
 }
