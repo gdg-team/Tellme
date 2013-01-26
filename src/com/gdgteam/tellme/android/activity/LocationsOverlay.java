@@ -34,6 +34,7 @@ public class LocationsOverlay extends Overlay {
     private AnnotatedLocationColors[] predefinedColors;
     private Map<String, Integer> locationIdColors = new HashMap<String, Integer>();
     private Map<String, Location> locations = new HashMap<String, Location>();
+    private Map<String, String> tweets = new HashMap<String, String>();
     private int colorInd = 0;
     
     private static final String ME = "Me";
@@ -93,7 +94,7 @@ public class LocationsOverlay extends Overlay {
         this.myLocation = myLocation;
     }
     
-    public void addLocation(String id, Location location) {
+    public void addLocation(String id, Location location, String tweet) {
         if(!locationIdColors.containsKey(id)) {
             if (colorInd == maxLocations - 1) {
                 colorInd = 0;
@@ -107,6 +108,8 @@ public class LocationsOverlay extends Overlay {
             // remove some id if there are too many locations
         }
         locations.put(id, location);
+        
+        tweets.put(id, tweet);
     }
 
     @Override
@@ -114,12 +117,12 @@ public class LocationsOverlay extends Overlay {
         if (shadow == false) {
             if(myLocation != null) {
                 AnnotatedLocationImage locationImage = locationImageFactory.createAnnotatedLocationImage(mapView, myLocation, RADIUS, getAnnotationRectLength(ME));
-                painter.drawAnnotatedLocation(canvas, locationImage, ME, myColors);
+                painter.drawAnnotatedLocation(canvas, locationImage, ME, "", myColors);
             }
 
             for(String id: locationIdColors.keySet()) {
                 AnnotatedLocationImage locationImage = locationImageFactory.createAnnotatedLocationImage(mapView, locations.get(id), RADIUS, getAnnotationRectLength(id));
-                painter.drawAnnotatedLocation(canvas, locationImage, id, predefinedColors[locationIdColors.get(id)]);
+                painter.drawAnnotatedLocation(canvas, locationImage, id, tweets.get(id), predefinedColors[locationIdColors.get(id)]);
             }
         }
         

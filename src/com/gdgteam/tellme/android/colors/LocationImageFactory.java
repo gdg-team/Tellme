@@ -27,10 +27,14 @@ public class LocationImageFactory {
         
         RectF oval = new RectF(point.x - radius, point.y - radius, point.x + radius, point.y + radius);
 
-        RectF backRect = new RectF(point.x + 2 + radius, point.y - 3 * radius, point.x - (2 + radius) + rectLength, point.y + radius);
+        RectF annotationBackRect = new RectF(point.x + 2 + radius, point.y - 3 * radius, point.x - (2 + radius) + rectLength, point.y + radius);
         
         Point annotationPoint = new Point(point.x + 2 * radius, point.y);
         
-        return new AnnotatedLocationImage(oval, backRect, annotationPoint);
+        RectF additionalBackRect = new RectF(point.x + 2 + radius, point.y + 2 * radius, point.x - (2 + radius) + rectLength * 2, point.y + 6 * radius);
+        
+        Point additionalPoint = new Point(point.x + 2 * radius, point.y + radius * 5);
+        
+        return new AnnotatedLocationImage(oval, annotationBackRect, annotationPoint, additionalBackRect, additionalPoint);
    }
 }

@@ -101,61 +101,61 @@ public class MainMapActivity extends MapActivity {
 		tweetDialog.dismiss();
 	}
 
-	private void updateWithNewLocation(Location location) {
-		if (location != null) {
-			locationsOverlay.setMyLocation(location);
-			Double geoLat = location.getLatitude() * 1E6;
-			Double geoLng = location.getLongitude() * 1E6;
-			GeoPoint point = new GeoPoint(geoLat.intValue(), geoLng.intValue());
-			mapController.animateTo(point);
-		}
-	}
+    private void updateWithNewLocation(Location location) {
+        if (location != null) {
+            locationsOverlay.setMyLocation(location);
+            Double geoLat = location.getLatitude() * 1E6;
+            Double geoLng = location.getLongitude() * 1E6;
+            GeoPoint point = new GeoPoint(geoLat.intValue(), geoLng.intValue());
+            mapController.animateTo(point);
+        }
+    }
 
-	private final LocationListener locationListener = new LocationListener() {
-		public void onLocationChanged(Location location) {
-			updateWithNewLocation(location);
-		}
+    private final LocationListener locationListener = new LocationListener() {
+        public void onLocationChanged(Location location) {
+            updateWithNewLocation(location);
+        }
 
-		public void onProviderDisabled(String provider) {
-		}
+        public void onProviderDisabled(String provider) {
+        }
 
-		public void onProviderEnabled(String provider) {
-		}
+        public void onProviderEnabled(String provider) {
+        }
 
-		public void onStatusChanged(String provider, int status, Bundle extras) {
-		}
-	};
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+        }
+    };
 
-	private final LocationListener dummyLocationListener = new LocationListener() {
-		public void onLocationChanged(Location location) {
-		}
+    private final LocationListener dummyLocationListener = new LocationListener() {
+        public void onLocationChanged(Location location) {
+        }
 
-		public void onProviderDisabled(String provider) {
-		}
+        public void onProviderDisabled(String provider) {
+        }
 
-		public void onProviderEnabled(String provider) {
-		}
+        public void onProviderEnabled(String provider) {
+        }
 
-		public void onStatusChanged(String provider, int status, Bundle extras) {
-		}
-	};
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+        }
+    };
 
-	private void emulateLocations() {
-		Location l1 = ApplManager.getInstance().getLocationProvider().getLocation(this, dummyLocationListener);
-		if(l1 == null) {
-			Log.w("gdg-team", "Location is null - check API key");
-			return;
-		}
-		l1.setLatitude(51.521255);
-		l1.setLongitude(-0.089285);
-		locationsOverlay.addLocation("@sorhed", l1);
-		Location l2 = ApplManager.getInstance().getLocationProvider().getLocation(this, dummyLocationListener);
-		if(l2 == null) {
-			Log.w("gdg-team", "Location is null - check API key");
-			return;
-		}
-		l2.setLatitude(51.519973);
-		l2.setLongitude(-0.083814);
-		locationsOverlay.addLocation("@kuklev", l2);
-	}
+    private void emulateLocations() {
+        Location l1 = ApplManager.getInstance().getLocationProvider().getLocation(this, dummyLocationListener);
+        if(l1 == null) {
+            Log.w("gdg-team", "Location is null - check API key");
+            return;
+        }
+        l1.setLatitude(51.521255);
+        l1.setLongitude(-0.089285);
+        locationsOverlay.addLocation("@sorhed", l1, "Just got here");
+        Location l2 = ApplManager.getInstance().getLocationProvider().getLocation(this, dummyLocationListener);
+        if(l2 == null) {
+            Log.w("gdg-team", "Location is null - check API key");
+            return;
+        }
+        l2.setLatitude(51.519973);
+        l2.setLongitude(-0.083814);
+        locationsOverlay.addLocation("@kuklev", l2, "Nice weather");
+    }
 }
