@@ -46,6 +46,10 @@ public class MainMapActivity extends MapActivity {
 
         setContentView(R.layout.map);
         MapView mapView = (MapView) findViewById(R.id.mapView);
+        if(mapView == null) {
+        	Log.w("gdg-team", "MapView is null - check API key");
+        	return;
+        }
         mapController = mapView.getController();
         mapView.setSatellite(false);
         mapView.setBuiltInZoomControls(true);
@@ -144,6 +148,10 @@ public class MainMapActivity extends MapActivity {
 
     private void emulateLocations() {
         Location l = ApplManager.getInstance().getLocationProvider().getLocation(this, dummyLocationListener);
+        if(l == null) {
+        	Log.w("gdg-team", "Location is null - check API key");
+        	return;
+        }
         l.setLatitude(51.488224);
         l.setLongitude(-0.054932);
         locationsOverlay.addLocation("@abcd", l);
