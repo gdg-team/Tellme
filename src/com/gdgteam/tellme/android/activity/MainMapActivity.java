@@ -2,18 +2,17 @@ package com.gdgteam.tellme.android.activity;
 
 import java.util.List;
 
-import android.accounts.Account;
-import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 
 import com.gdgteam.tellme.R;
 import com.gdgteam.tellme.android.ApplManager;
+import com.gdgteam.tellme.android.twitter.Twitter;
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapActivity;
 import com.google.android.maps.MapController;
@@ -74,6 +73,20 @@ public class MainMapActivity extends MapActivity {
     	if(visibility == View.VISIBLE) searchLayout.setVisibility(View.GONE);
     	else searchLayout.setVisibility(View.VISIBLE);
     }
+
+	public void testAuthorisation(View view) {
+		new AsyncTask<Void, Void, Void>() {
+			@Override
+			protected Void doInBackground(Void... params) {
+				try {
+					Twitter.tweet("Hello (again) world!", "51.0", "1.0");
+				} catch(Exception e) {
+					Log.w("gdg-team", e);
+				}
+				return null;
+			}
+		}.execute();
+	}
 
 //    @Override
 //    public boolean onCreateOptionsMenu(Menu menu) {
