@@ -99,6 +99,8 @@ public class MainMapActivity extends MapActivity {
 			}
 		}.execute();
 		tweetDialog.dismiss();
+		Location l = ApplManager.getInstance().getLocationProvider().getLocation(this, locationListener);		
+		locationsOverlay.addLocation("me", l, text);
 	}
 
     private void updateWithNewLocation(Location location) {
