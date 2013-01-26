@@ -50,11 +50,13 @@ public class MainMapActivity extends MapActivity {
         mapView.setBuiltInZoomControls(true);
         mapController.setZoom(17);
 
-        locationsOverlay = new LocationsOverlay();
+        locationsOverlay = new LocationsOverlay(10);
         List<Overlay> overlays = mapView.getOverlays();
         overlays.add(locationsOverlay);
         mapView.postInvalidate();
-
+        
+        emulateLocations();
+        
         Location l = ApplManager.getInstance().getLocationProvider().getLocation(this, locationListener);
 //        Account googleAccount = ApplManager.getInstance().getAccountProvider().getGoogleAccount(this);
 
@@ -95,7 +97,7 @@ public class MainMapActivity extends MapActivity {
 
     private void updateWithNewLocation(Location location) {
         if (location != null) {
-            locationsOverlay.setLocation(location);
+            locationsOverlay.setMyLocation(location);
             Double geoLat = location.getLatitude() * 1E6;
             Double geoLng = location.getLongitude() * 1E6;
             GeoPoint point = new GeoPoint(geoLat.intValue(), geoLng.intValue());
@@ -118,4 +120,24 @@ public class MainMapActivity extends MapActivity {
         }
     };
 
+    private final LocationListener dummyLocationListener = new LocationListener() {
+        public void onLocationChanged(Location location) {
+        }
+
+        public void onProviderDisabled(String provider) {
+        }
+
+        public void onProviderEnabled(String provider) {
+        }
+
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+        }
+    };
+
+    private void emulateLocations() {
+        Location l = ApplManager.getInstance().getLocationProvider().getLocation(this, dummyLocationListener);
+        l.setLatitude(51.488224);
+        l.setLongitude(-0.054932);
+        locationsOverlay.addLocation("@abcd", l);
+    }
 }
