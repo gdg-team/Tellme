@@ -21,7 +21,7 @@ public class LocationImageFactory {
         GeoPoint geoPoint;
         geoPoint = new GeoPoint(latitude.intValue(), longitude.intValue());
 
-        // Convert the location to screen pixels
+        // Convert the myLocation to screen pixels
         Point point = new Point();
         projection.toPixels(geoPoint, point);
         
