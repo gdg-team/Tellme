@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/tweetRootLayout"
+    style="@style/AppTheme"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+	<EditText
+	    android:id="@+id/tweetTextEntry"
+	    android:layout_width="fill_parent"
+	    android:layout_height="0dip"
+	    android:layout_marginBottom="10dp"
+	    android:layout_marginLeft="10dp"
+	    android:layout_marginRight="10dp"
+	    android:layout_marginTop="10dp"
+	    android:layout_weight="1"
+	    android:hint="@string/writeYourTweet" />
+
+	<LinearLayout
+	    xmlns:android="http://schemas.android.com/apk/res/android"
+	    android:id="@+id/tweetButtonBarLayout"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:orientation="horizontal" >
+
+		<Button
+		    android:id="@+id/tweetCancelButton"
+		    android:layout_width="fill_parent"
+		    android:layout_height="wrap_content"
+		    android:layout_weight="1"
+		    android:text="@string/cancel"
+		    android:onClick="cancelButtonPressed" />
+
+		<Button
+		    android:id="@+id/tweetTweetButton"
+		    android:layout_width="fill_parent"
+		    android:layout_height="wrap_content"
+		    android:layout_weight="1"
+		    android:text="@string/tweet"
+		    android:onClick="tweetButtonPressed" />
+
+	</LinearLayout>
+</LinearLayout>

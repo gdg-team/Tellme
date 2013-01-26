@@ -2,13 +2,16 @@ package com.gdgteam.tellme.android.activity;
 
 import java.util.List;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.location.Location;
 import android.location.LocationListener;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.EditText;
 
 import com.gdgteam.tellme.R;
 import com.gdgteam.tellme.android.ApplManager;
@@ -24,157 +27,135 @@ import com.google.android.maps.Overlay;
  * @author Andrey Pereverzin
  */
 public class MainMapActivity extends MapActivity {
-    private static final String TAG = MainMapActivity.class.getSimpleName();
 
-    private static final int EMAIL_ACCOUNT_MENU_ITEM = Menu.FIRST;
-    private static final int CONTACTS_TO_TRACK_MENU_ITEM = Menu.FIRST + 1;
-    private static final int CONTACTS_TO_INFORM_MENU_ITEM = Menu.FIRST + 2;
+	@Override
+	protected boolean isRouteDisplayed() {
+		return false;
+	}
 
-    @Override
-    protected boolean isRouteDisplayed() {
-        return false;
-    }
+	private MapController mapController;
+	private LocationsOverlay locationsOverlay;
+	private Dialog tweetDialog = null;
 
-    private MapController mapController;
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
 
-    private LocationsOverlay locationsOverlay;
+		setContentView(R.layout.map);
+		MapView mapView = (MapView) findViewById(R.id.mapView);
+		if(mapView == null) {
+			Log.w("gdg-team", "MapView is null - check API key");
+			return;
+		}
+		mapController = mapView.getController();
+		mapView.setSatellite(false);
+		mapView.setBuiltInZoomControls(true);
+		mapController.setZoom(17);
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+		locationsOverlay = new LocationsOverlay(this, 10);
+		List<Overlay> overlays = mapView.getOverlays();
+		overlays.add(locationsOverlay);
+		mapView.postInvalidate();
 
-        setContentView(R.layout.map);
-        MapView mapView = (MapView) findViewById(R.id.mapView);
-        if(mapView == null) {
-        	Log.w("gdg-team", "MapView is null - check API key");
-        	return;
-        }
-        mapController = mapView.getController();
-        mapView.setSatellite(false);
-        mapView.setBuiltInZoomControls(true);
-        mapController.setZoom(17);
+		emulateLocations();
 
-        locationsOverlay = new LocationsOverlay(this, 10);
-        List<Overlay> overlays = mapView.getOverlays();
-        overlays.add(locationsOverlay);
-        mapView.postInvalidate();
-        
-        emulateLocations();
-        
-        Location l = ApplManager.getInstance().getLocationProvider().getLocation(this, locationListener);
-//        Account googleAccount = ApplManager.getInstance().getAccountProvider().getGoogleAccount(this);
+		Location l = ApplManager.getInstance().getLocationProvider().getLocation(this, locationListener);
 
-        updateWithNewLocation(l);
-    }
+		updateWithNewLocation(l);
+	}
 
-    public void showHideSearchControls(View view) {
-    	View searchLayout = findViewById(R.id.searchLayout);
-    	int visibility = searchLayout.getVisibility();
-    	if(visibility == View.VISIBLE) searchLayout.setVisibility(View.GONE);
-    	else searchLayout.setVisibility(View.VISIBLE);
-    }
+	public void showHideSearchControls(View view) {
+		View searchLayout = findViewById(R.id.searchLayout);
+		int visibility = searchLayout.getVisibility();
+		if(visibility == View.VISIBLE) searchLayout.setVisibility(View.GONE);
+		else searchLayout.setVisibility(View.VISIBLE);
+	}
 
-	public void testAuthorisation(View view) {
+	public void addTweetButtonPressed(View view) {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		LayoutInflater inflater = getLayoutInflater();
+		builder.setView(inflater.inflate(R.layout.tweet_dialog, null));
+		tweetDialog = builder.create();
+		tweetDialog.show();
+	}
+
+	public void cancelButtonPressed(View view) {
+		tweetDialog.dismiss();
+	}
+
+	public void tweetButtonPressed(View view) {
+		EditText tweetTextEntry =
+				(EditText) tweetDialog.findViewById(R.id.tweetTextEntry);
+		final String text = tweetTextEntry.getText().toString();
 		new AsyncTask<Void, Void, Void>() {
 			@Override
 			protected Void doInBackground(Void... params) {
 				try {
-					Twitter.tweet("Hello (again) world!", "51.0", "1.0");
+					Twitter.tweet(text, "51.0", "1.0");
 				} catch(Exception e) {
 					Log.w("gdg-team", e);
 				}
 				return null;
 			}
 		}.execute();
+		tweetDialog.dismiss();
 	}
 
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        Log.i(TAG, "onCreateOptionsMenu() called");
-//
-//        menu.add(0, EMAIL_ACCOUNT_MENU_ITEM, 0, R.string.edit_email_account);
-//        menu.add(0, CONTACTS_TO_TRACK_MENU_ITEM, 0, R.string.to_track);
-//        menu.add(0, CONTACTS_TO_INFORM_MENU_ITEM, 0, R.string.to_inform);
-//
-//        return super.onCreateOptionsMenu(menu);
-//    }
-//
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        Intent intent;
-//        switch (item.getItemId()) {
-//        case EMAIL_ACCOUNT_MENU_ITEM:
-//            intent = new Intent(MainMapActivity.this, EmailAccountEditActivity.class);
-//            startActivity(intent);
-//            return true;
-//        case CONTACTS_TO_TRACK_MENU_ITEM:
-//            intent = new Intent(MainMapActivity.this, EmailAccountEditActivity.class);
-//            startActivity(intent);
-//            return true;
-//        case CONTACTS_TO_INFORM_MENU_ITEM:
-//            intent = new Intent(MainMapActivity.this, EmailAccountEditActivity.class);
-//            startActivity(intent);
-//            return true;
-//        default:
-//            return super.onOptionsItemSelected(item);
-//        }
-//    }
+	private void updateWithNewLocation(Location location) {
+		if (location != null) {
+			locationsOverlay.setMyLocation(location);
+			Double geoLat = location.getLatitude() * 1E6;
+			Double geoLng = location.getLongitude() * 1E6;
+			GeoPoint point = new GeoPoint(geoLat.intValue(), geoLng.intValue());
+			mapController.animateTo(point);
+		}
+	}
 
-    private void updateWithNewLocation(Location location) {
-        if (location != null) {
-            locationsOverlay.setMyLocation(location);
-            Double geoLat = location.getLatitude() * 1E6;
-            Double geoLng = location.getLongitude() * 1E6;
-            GeoPoint point = new GeoPoint(geoLat.intValue(), geoLng.intValue());
-            mapController.animateTo(point);
-        }
-    }
+	private final LocationListener locationListener = new LocationListener() {
+		public void onLocationChanged(Location location) {
+			updateWithNewLocation(location);
+		}
 
-    private final LocationListener locationListener = new LocationListener() {
-        public void onLocationChanged(Location location) {
-            updateWithNewLocation(location);
-        }
+		public void onProviderDisabled(String provider) {
+		}
 
-        public void onProviderDisabled(String provider) {
-        }
+		public void onProviderEnabled(String provider) {
+		}
 
-        public void onProviderEnabled(String provider) {
-        }
+		public void onStatusChanged(String provider, int status, Bundle extras) {
+		}
+	};
 
-        public void onStatusChanged(String provider, int status, Bundle extras) {
-        }
-    };
+	private final LocationListener dummyLocationListener = new LocationListener() {
+		public void onLocationChanged(Location location) {
+		}
 
-    private final LocationListener dummyLocationListener = new LocationListener() {
-        public void onLocationChanged(Location location) {
-        }
+		public void onProviderDisabled(String provider) {
+		}
 
-        public void onProviderDisabled(String provider) {
-        }
+		public void onProviderEnabled(String provider) {
+		}
 
-        public void onProviderEnabled(String provider) {
-        }
+		public void onStatusChanged(String provider, int status, Bundle extras) {
+		}
+	};
 
-        public void onStatusChanged(String provider, int status, Bundle extras) {
-        }
-    };
-
-    private void emulateLocations() {
-        Location l1 = ApplManager.getInstance().getLocationProvider().getLocation(this, dummyLocationListener);
-        if(l1 == null) {
-            Log.w("gdg-team", "Location is null - check API key");
-            return;
-        }
-        l1.setLatitude(51.521255);
-        l1.setLongitude(-0.089285);
-        locationsOverlay.addLocation("@sorhed", l1);
-        Location l2 = ApplManager.getInstance().getLocationProvider().getLocation(this, dummyLocationListener);
-        if(l2 == null) {
-            Log.w("gdg-team", "Location is null - check API key");
-            return;
-        }
-        l2.setLatitude(51.519973);
-        l2.setLongitude(-0.083814);
-        locationsOverlay.addLocation("@kuklev", l2);
-    }
+	private void emulateLocations() {
+		Location l1 = ApplManager.getInstance().getLocationProvider().getLocation(this, dummyLocationListener);
+		if(l1 == null) {
+			Log.w("gdg-team", "Location is null - check API key");
+			return;
+		}
+		l1.setLatitude(51.521255);
+		l1.setLongitude(-0.089285);
+		locationsOverlay.addLocation("@sorhed", l1);
+		Location l2 = ApplManager.getInstance().getLocationProvider().getLocation(this, dummyLocationListener);
+		if(l2 == null) {
+			Log.w("gdg-team", "Location is null - check API key");
+			return;
+		}
+		l2.setLatitude(51.519973);
+		l2.setLongitude(-0.083814);
+		locationsOverlay.addLocation("@kuklev", l2);
+	}
 }
