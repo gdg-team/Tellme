@@ -50,7 +50,7 @@ public class MainMapActivity extends MapActivity {
         mapView.setBuiltInZoomControls(true);
         mapController.setZoom(17);
 
-        locationsOverlay = new LocationsOverlay(10);
+        locationsOverlay = new LocationsOverlay(this, 10);
         List<Overlay> overlays = mapView.getOverlays();
         overlays.add(locationsOverlay);
         mapView.postInvalidate();
@@ -135,9 +135,13 @@ public class MainMapActivity extends MapActivity {
     };
 
     private void emulateLocations() {
-        Location l = ApplManager.getInstance().getLocationProvider().getLocation(this, dummyLocationListener);
-        l.setLatitude(51.488224);
-        l.setLongitude(-0.054932);
-        locationsOverlay.addLocation("@abcd", l);
+        Location l1 = ApplManager.getInstance().getLocationProvider().getLocation(this, dummyLocationListener);
+        l1.setLatitude(51.521255);
+        l1.setLongitude(-0.089285);
+        locationsOverlay.addLocation("@sorhed", l1);
+        Location l2 = ApplManager.getInstance().getLocationProvider().getLocation(this, dummyLocationListener);
+        l2.setLatitude(51.519973);
+        l2.setLongitude(-0.083814);
+        locationsOverlay.addLocation("@kuklev", l2);
     }
 }
